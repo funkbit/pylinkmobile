@@ -16,7 +16,7 @@ Install `pylinkmobile` (available on PyPi):
 
 	from linkmobile.service import MessageService
 	
-	service = MessageService(user='YOUR_USERNAME', password='YOUR_PASSWORD', debug=False)
+	service = MessageService(username='YOUR_USERNAME', password='YOUR_PASSWORD', debug=False)
 	
 	# Send SMS
     sms = service.sms(

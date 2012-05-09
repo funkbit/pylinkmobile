@@ -48,6 +48,33 @@ class SMSHandler(object):
         
         return urllib.urlencode(query_items)
     
+    def parse_response(self, raw_response):
+        """
+        Tries to normalize the response to a dictionary.
+        """
+        
+        parsed_response = {
+            'success': False,
+            'raw_response': raw_response,
+        }
+        
+        # Try to make sense of the response status
+        try:
+            status, msg = raw_response.split('\r\n')
+            parsed_response['success'] = status == 'OK'
+            parsed_response['message'] = msg
+        except:
+            msg = None
+        
+        # Try to parse the message ID
+        try:
+            key, val = msg.split('=')
+            parsed_response[key] = val
+        except:
+            pass
+        
+        return parsed_response
+    
     def send(self):
         """
         Sends a SMS message.
@@ -75,14 +102,4 @@ class SMSHandler(object):
         # Log raw response
         logger.info('Raw response: %s' % data)
         
-        # Try to make sense of return value
-        try:
-            status, msg = data.split('\r\n')
-        except ValueError:
-            return data
-        
-        return {
-            'success': status == 'OK',
-            'status': status,
-            'message': msg,
-        }
+        return self.parse_response(data)

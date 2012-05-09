@@ -37,12 +37,9 @@ class TestSMS(unittest.TestCase):
         Test the SMS send method.
         """
         
-        username = 'USER'
-        password = 'PASS'
-        
-    	service = MessageService(username=username, password=password, debug=True)
+    	service = MessageService(username='USER', password='PASS', debug=True)
 	    
-    	# Send SMS
+    	# Generate SMS object
         sms = service.sms(
             Data=u'Hello Wørld!',
             Originator='Santa',
@@ -57,7 +54,34 @@ class TestSMS(unittest.TestCase):
         # Check debug response
         self.assertTrue(response)
         self.assertTrue(response['success'])
-        self.assertEquals(response['status'], 'OK')
+        self.assertEquals(response['raw_response'], 'OK\r\nMessageID=1234')
+        self.assertEquals(response['message'], 'MessageID=1234')
+        self.assertEquals(response['MessageID'], '1234')
+    
+    def testParseFailedResponse(self):
+        """
+        Test the parseResponse method.
+        """
+        
+    	service = MessageService(username='USER', password='PASS', debug=True)
+        
+    	# Generate SMS object
+        sms = service.sms(
+            Data=u'Hello Wørld!',
+            Originator='Santa',
+            Msisdn='+4700000000'
+        )
+        
+        # Parse an error message
+        data = 'NOK\r\nAccess is denied. Incorrect user or password.'
+        response = sms.parse_response(data)
+        
+        # Check debug response
+        self.assertTrue(response)
+        self.assertFalse(response['success'])
+        self.assertEquals(response['raw_response'], data)
+        self.assertEquals(response['message'], 'Access is denied. Incorrect user or password.')
+        
 
 if __name__ == "__main__":
     unittest.main()
