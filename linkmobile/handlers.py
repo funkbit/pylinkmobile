@@ -82,7 +82,7 @@ class SMSHandler(object):
         
         # Generate the URL to call
         url = self._url + self._generate_query_string()
-        logger.debug('Sending request: %s' % url)
+        logger.info('Sending request: %s' % url)
         
         # Generate GET request
         req = urllib2.Request(url=url)
@@ -92,14 +92,15 @@ class SMSHandler(object):
                 f = urllib2.urlopen(req)
                 data = f.read()
                 f.close()
-            except urllib2.HTTPError, err:
-                data = err.read()
-                logger.error('Request failed: %s' % data, exc_info=err)
+                
+                # Log raw response
+                logger.info('Raw response: %s' % data)
+                
+            except Exception, err:
+                logger.exception('Request failed.')
+                data = None
         else:
             # Debug data
             data = 'OK\r\nMessageID=1234'
-        
-        # Log raw response
-        logger.info('Raw response: %s' % data)
         
         return self.parse_response(data)
