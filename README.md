@@ -19,9 +19,9 @@ Install `pylinkmobile` (available on PyPi):
 	service = MessageService(username='YOUR_USERNAME', password='YOUR_PASSWORD', debug=False)
 	
 	# Send SMS
-    sms = service.sms(
-        Data='Hello World!',
-        Originator='Santa',
-        Msisdn='+4700000000'
-    )
-    response = sms.send()
+	sms = service.sms(
+		Data='Hello World!',
+		Originator='Santa',
+		Msisdn='+4700000000'
+	)
+	response = sms.send()
